@@ -2,28 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
+using System;
 
 public class PlayerMovement : MonoBehaviour
 {
-    enum State { Idle, Run, Warzone}
+    enum State { Idle, Run, Warzone, Dead}
 
 
     [Header("Elements")]
     [SerializeField] private PlayerAnimator _playerAnimator;
-    [SerializeField] private PlayerIK playerIK;
+    [SerializeField] private CharakterIK playerIK;
+    [SerializeField] private CharacterRagdoll characterRagdoll;
 
     [Header("Settings")]
     [SerializeField] private float _moveSpeed;
     [SerializeField] private float _slowMoScale;
-    private State _state;
+    [SerializeField] private Transform enemyTarget;
+    private State state;
     private Warzone currentWarzone;
 
     [Header("Spline Settings")]
     private float _warzoneTimer;
 
+    [Header("Actions")]
+    public static Action onEnteredWarzone;
+    public static Action onExitedWarzone;
+    public static Action onDied;
+
     void Start()
     {
-        _state = State.Idle;
+        state = State.Idle;
     }
 
     // Update is called once per frame
@@ -38,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void ManageState()
     {
-        switch (_state)
+        switch (state)
         {
             case State.Idle:
                 break;
@@ -54,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartRunning()
     {
-        _state = State.Run;
+        state = State.Run;
         _playerAnimator.PlayRunAnimation();
     }
 
@@ -68,7 +76,7 @@ public class PlayerMovement : MonoBehaviour
         if (currentWarzone != null)
             return;
 
-        _state = State.Warzone;
+        state = State.Warzone;
         currentWarzone = warzone;
 
         currentWarzone.StartAnimatingIKTarget();
@@ -78,8 +86,11 @@ public class PlayerMovement : MonoBehaviour
         _playerAnimator.Play(currentWarzone.GetAnimationToPlay(), currentWarzone.GetAnimatorSpeed());
 
         Time.timeScale = _slowMoScale;
+        Time.fixedDeltaTime = _slowMoScale / 50;
 
         playerIK.ConfigureIK(currentWarzone.GetIKTarget());
+
+        onEnteredWarzone?.Invoke();
 
     }
 
@@ -96,12 +107,32 @@ public class PlayerMovement : MonoBehaviour
 
     private void ExitWarzone()
     {
-        _state = State.Run;
+        state = State.Run;
         currentWarzone = null;
         _playerAnimator.Play("Run", 1f);
 
         Time.timeScale = 1f;
+        Time.fixedDeltaTime = 1f / 50;
 
         playerIK.DisableIK();
+        onExitedWarzone?.Invoke();
+    }
+
+    public Transform GetEnemyTarget()
+    {
+        return enemyTarget;
+    }
+
+    public void TakeDamage()
+    {
+        state = State.Dead;
+        
+        characterRagdoll.Ragdollify();
+
+        Time.timeScale = 1f;
+        Time.fixedDeltaTime = 1f / 50;
+
+        onDied?.Invoke();
+
     }
 }

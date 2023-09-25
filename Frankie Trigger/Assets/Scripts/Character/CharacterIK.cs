@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
-public class PlayerIK : MonoBehaviour
+public class CharakterIK : MonoBehaviour
 {
     [Header("Elements")]
     [SerializeField] private RigBuilder rigBuilder;
