@@ -29,6 +29,16 @@ public class PlayerMovement : MonoBehaviour
     public static Action onExitedWarzone;
     public static Action onDied;
 
+
+    private void Awake()
+    {
+        GameManager.onGameStateChanged += GameStateChangeCallback;
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.onGameStateChanged -= GameStateChangeCallback;
+    }
     void Start()
     {
         state = State.Idle;
@@ -37,11 +47,19 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if(GameManager.Instance.IsGameState())
+            ManageState();
+    }
+
+    private void GameStateChangeCallback(GameState gameState)
+    {
+        switch (gameState)
         {
-            StartRunning();
+            case GameState.Game:
+                StartRunning();
+                break;
+
         }
-        ManageState();
     }
 
     private void ManageState()
@@ -133,6 +151,15 @@ public class PlayerMovement : MonoBehaviour
         Time.fixedDeltaTime = 1f / 50;
 
         onDied?.Invoke();
+        GameManager.Instance.SetGameState(GameState.GameOver);
 
+    }
+
+    public void HitFinishLine()
+    {
+        state = State.Idle;
+        _playerAnimator.PlayIdleAnimation();
+
+        GameManager.Instance.SetGameState(GameState.LevelComplete);
     }
 }

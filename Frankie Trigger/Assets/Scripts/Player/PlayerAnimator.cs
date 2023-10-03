@@ -35,4 +35,9 @@ public class PlayerAnimator : MonoBehaviour
         _animator.speed = animatorSpeed;
         Play(animationName);
     }
+
+    public void PlayIdleAnimation()
+    {
+        Play("Idle");
+    }
 }

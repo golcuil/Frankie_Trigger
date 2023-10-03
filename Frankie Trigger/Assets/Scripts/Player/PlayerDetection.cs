@@ -19,7 +19,8 @@ public class PlayerDetection : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        DetectStuff();
+        if(GameManager.Instance.IsGameState())
+            DetectStuff();
     }
 
     private void DetectStuff()
@@ -28,8 +29,21 @@ public class PlayerDetection : MonoBehaviour
         foreach (var collider in detectedObjects)
         {
             if (collider.CompareTag("Warzone Enter"))
+            {
                 EnteredWarzoneCallback(collider);
+            }
+            else if(collider.CompareTag("Finish"))
+            {
+                HitFinishLine();
+            }
+            
+
         }
+    }
+
+    private void HitFinishLine()
+    {
+        playerMovement.HitFinishLine();
     }
 
     private void EnteredWarzoneCallback(Collider warzoneTriggerCollider)

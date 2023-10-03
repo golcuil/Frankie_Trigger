@@ -77,5 +77,6 @@ public class PlayerShooter : MonoBehaviour
     private void DiedCallback()
     {
         SetShootingLineVisibility(false);
+        canShoot = false;
     }
 }
