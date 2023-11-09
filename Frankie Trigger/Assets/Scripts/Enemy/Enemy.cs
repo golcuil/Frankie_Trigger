@@ -37,7 +37,6 @@ public class Enemy : MonoBehaviour
     private void Die()
     {
         state = State.Dead;
-
         characterRagdoll.Ragdollify();
     }
 
@@ -47,5 +46,10 @@ public class Enemy : MonoBehaviour
             return;
 
         enemyShooter.TryShooting();
+    }
+
+    public bool IsDead()
+    {
+        return state == State.Dead;
     }
 }

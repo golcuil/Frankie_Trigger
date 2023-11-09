@@ -116,17 +116,18 @@ public class PlayerMovement : MonoBehaviour
     {
         _warzoneTimer += Time.deltaTime;
 
-        float splinePercent = _warzoneTimer / currentWarzone.GetDuration();
+        float splinePercent = Mathf.Clamp01(_warzoneTimer / currentWarzone.GetDuration());
         transform.position = currentWarzone.GetPlayerSpline().EvaluatePosition(splinePercent);
 
-        if (_warzoneTimer >= 1)
+        if (splinePercent >= 1)
             ExitWarzone();
     }
 
     private void ExitWarzone()
     {
-        state = State.Run;
         currentWarzone = null;
+
+        state = State.Run;
         _playerAnimator.Play("Run", 1f);
 
         Time.timeScale = 1f;
