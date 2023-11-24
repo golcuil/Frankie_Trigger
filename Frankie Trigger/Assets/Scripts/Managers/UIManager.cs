@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject gamePanel;
     [SerializeField] private GameObject levelCompletePanel;
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject outfitShopPanel;
     // Start is called before the first frame update
 
     private void Awake()
@@ -41,6 +42,8 @@ public class UIManager : MonoBehaviour
                 gamePanel.SetActive(false);
                 levelCompletePanel.SetActive(false);
                 gameOverPanel.SetActive(false);
+
+                CloseOutfitShop();
                 break;
 
             case GameState.Game:
@@ -75,5 +78,15 @@ public class UIManager : MonoBehaviour
     public void NextButtonCallback()
     {
         GameManager.Instance.NextLevel();
+    }
+
+    public void OpenOutfitShop()
+    {
+        outfitShopPanel.SetActive(true);
+    }
+
+    public void CloseOutfitShop()
+    {
+        outfitShopPanel.SetActive(false);
     }
 }
