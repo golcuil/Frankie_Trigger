@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class OutfitShopManager : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class OutfitShopManager : MonoBehaviour
 
     [Header("Data")]
     [SerializeField] private OutfitData[] outfitDatas;
+
+    [Header("Actions")]
+    public static Action onOutfitUnlocked;
     // Start is called before the first frame update
     void Start()
     {
@@ -117,6 +121,8 @@ public class OutfitShopManager : MonoBehaviour
         // Save the last outfit index
         lastOutfitIndex = clickedOutfitIndex;
         SaveLastOutfit();
+
+        onOutfitUnlocked?.Invoke();
     }
 
     private bool IsOutfitUnlocked(int index)

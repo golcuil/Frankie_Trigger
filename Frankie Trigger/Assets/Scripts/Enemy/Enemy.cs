@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Enemy : MonoBehaviour
 {
@@ -11,7 +12,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] private EnemyShooter enemyShooter;
     [SerializeField] private CharacterRagdoll characterRagdoll;
     [SerializeField] private CharakterIK charakterIK;
-    private PlayerMovement playerMovement; 
+    private PlayerMovement playerMovement;
+
+    [Header("Actions")]
+    public static Action onDead;
     // Start is called before the first frame update
     void Start()
     {
@@ -38,6 +42,7 @@ public class Enemy : MonoBehaviour
     {
         state = State.Dead;
         characterRagdoll.Ragdollify();
+        onDead?.Invoke();
     }
 
     public void ShootAtPlayer()
